@@ -125,3 +125,31 @@ if __name__ == "__main__":
         print("\nYou can now run the recommendation engine using sample data.")
     else:
         print("\nAll files found! You can proceed with the recommendation engine.")
+import pandas as pd
+
+# Test customers and locations
+test_customers = pd.read_csv(r"C:\Users\manoh\Data\test_customers.csv")
+test_locations = pd.read_csv(r"C:\Users\manoh\Data\test_locations.csv")
+vendors = pd.read_csv(r"C:\Users\manoh\Data\vendors.csv")
+
+# Merge test customers with their locations
+test_customer_locations = test_locations.merge(test_customers[['customer_id']], on='customer_id', how='left')
+
+# Create all combinations of customer-location-vendor
+rows = []
+for _, row in test_customer_locations.iterrows():
+    cust_id = row['customer_id']
+    loc_num = row['location_number']
+    for vendor_id in vendors['id']:
+        rows.append({
+            'CID X LOC_NUM X VENDOR': f"{cust_id} X {loc_num} X {vendor_id}",
+            'target': 0
+        })
+
+# Convert to DataFrame
+submission = pd.DataFrame(rows)
+
+# Save submission
+submission.to_csv(r"C:\Users\manoh\Data\submission_final.csv", index=False)
+print(submission.head(20))
+
